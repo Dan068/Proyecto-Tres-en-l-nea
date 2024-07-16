@@ -1,4 +1,4 @@
-* {
+/* * {
   box-sizing: border-box;
 }
 
@@ -48,27 +48,28 @@ ul {
 
 * {
   box-sizing: border-box;
-}
+} */
 
 body {
   font-family: sans-serif;
   margin: 20px;
-  padding: 0;
+  padding: 100px;;
 }
 
 .square {
   background: #fff;
   border: 1px solid #999;
   float: left;
-  font-size: 24px;
+  font-size: 80px;
   font-weight: bold;
   line-height: 34px;
-  height: 34px;
+  height: 200px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 200px;
+  
 }
 
 .board-row:after {
@@ -78,13 +79,13 @@ body {
 }
 
 .status {
-  margin-bottom: 10px;
-}
-.game {
-  display: flex;
-  flex-direction: row;
+  margin-bottom: 50px;
+  font-size: 60px;
 }
 
-.game-info {
-  margin-left: 20px;
+.game{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px;
 }
