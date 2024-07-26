@@ -1,7 +1,16 @@
-function Square({value, onSquareClick}){
+const Square=  ({ children, isSelected, updateBoard, index })=>  {
+    const className = `square ${isSelected ? 'is-selected' : ''}`
+  
+    const handleClick = () => {
+      updateBoard(index)
+    }
   
     return (
-        <button className="square" onClick={onSquareClick}>{value}</button>
+      <div onClick={handleClick} className={className}>
+        {children}
+      </div>
     )
-}
-export default Square;
+  }
+  export default Square
+  
+  

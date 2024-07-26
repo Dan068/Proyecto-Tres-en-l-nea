@@ -1,4 +1,4 @@
-const CalculateWinner = (Square)=>{
+const CalculateWinner = (boardToCheck)=>{
     const lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -11,8 +11,8 @@ const CalculateWinner = (Square)=>{
       ];
       for (let i = 0; i< lines.length; i++){
         const [a, b, c] = lines[i];
-        if (Square[a] && Square[a] === Square[b] && Square[a] === Square[c]) {
-            return Square[a];
+        if (boardToCheck[a] && boardToCheck[a] === boardToCheck[b] && boardToCheck[a] === boardToCheck[c]) {
+            return boardToCheck[a];
           }
         }
         return null;

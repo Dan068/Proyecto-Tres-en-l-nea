@@ -1,60 +1,97 @@
 import { useState } from "react";
-import Square from "./Square";
+import Square from './Square'
 import CalculateWinner from "./CalculateWinner";
-import Restart from "./Restart";
+import confetti from 'canvas-confetti'
+
+const TURNS ={
+  X:'X',
+  O : 'O'
+}
 
 function Board (){
-    const [xIsNext, setXIsNext] = useState(true);
-    const [squares, setSquares] = useState(Array(9).fill(null));
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [turn, setTurn] = useState(TURNS.X);
+  const [winner, setWinner] = useState(null)
 
-   function handleClick(i) {
-    if (squares[i] || CalculateWinner(squares)) {
-        return;
-      }
-    const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
+    const Restart =()=>{
+      setBoard(Array(9).fill(null))
+      setTurn(TURNS.X)
+      setWinner(null)
+      
     }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
-  }
-  const winner = CalculateWinner(squares);
-  let status;
-  if (winner) {
-    status = "Ganador: " + winner;
-  } else {
-    status = "Siguiente jugador: " + (xIsNext ? "X" : "O");
-  }
+    const checkEndGame=(newBoard)=>{
+      return newBoard.every((square) => square !== null)
+    }
+
+
+     const updateBoard=(i)=>{
+      if(board[i] || winner) return
+
+      const newBoard =[...board]
+      newBoard[i] = turn
+      setBoard(newBoard)
+
+      const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
+      setTurn(newTurn)
+
+      const newWinner= CalculateWinner(newBoard)
+      if(newWinner){
+        confetti()
+        setWinner(newWinner)
+      } else if( checkEndGame(newBoard)){
+        setWinner(false)
+      }
+     }
+  
+
     return(
         <>
-        <div className="game">
+        <div className="board">
+          <h1>Tic tac toe</h1>
+          <section className='game'>
+        {
+          board.map((square, index) => {
+            return (
+              <Square
+                key={index}
+                index={index}
+                updateBoard={updateBoard}
+              >
+                {square}
+              </Square>
+            )
+          })
+        }
+      </section>
+      <section className='turn'>
+        <Square isSelected={turn === TURNS.X}>
+          {TURNS.X}
+        </Square>
+        <Square isSelected={turn === TURNS.O}>
+          {TURNS.O}
+        </Square>
+      </section>
+      <button onClick={Restart}>Reset del juego</button>
 
-        <div className="status">{status}</div>
-         <div className="board-row">
-    <Square value={squares[0]} onSquareClick={()=>handleClick(0)} />
-   <Square value={squares[1]} onSquareClick={()=>handleClick(1)} />
-   <Square value={squares[2]} onSquareClick={()=>handleClick(2)
-} />
-    </div>
-    <div className="board-row">
-    <Square value={squares[3]} onSquareClick={()=>handleClick(3)
-}/>
-   <Square value={squares[4]} onSquareClick={()=>handleClick(4)
-} />
-   <Square value={squares[5]} onSquareClick={()=>handleClick(5)
-} />
-    </div>
-    <div className="board-row">
-    <Square value={squares[6]} onSquareClick={()=>handleClick(6)
-} />
-   <Square value={squares[7]} onSquareClick={()=>handleClick(7)
-} />
-   <Square value={squares[8]} onSquareClick={()=>handleClick(8)
-} />
-    </div>
-</div>
+            {winner !== null &&(
+              <section className="winner">
+                <div className="text">
+                  <h2>{
+                    winner === false? 'Empate':  'Ganó'
+                    }
+                    </h2>
+                    <header className="win">
+                      {winner && <Square>{winner}</Square>}
+                    </header>
+                    <footer>
+                      <button onClick={Restart} >Empezar de nuevo</button>
+                    </footer>
+                </div>
+              </section>
+            )} 
+        
+         
+          </div>
         </>
     )
 }
