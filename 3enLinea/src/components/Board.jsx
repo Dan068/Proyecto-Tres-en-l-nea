@@ -1,27 +1,38 @@
 import { useState } from "react";
-import Square from './Square'
-import CalculateWinner from "./CalculateWinner";
 import confetti from 'canvas-confetti'
 
-const TURNS ={
-  X:'X',
-  O : 'O'
-}
+import Square from './Square'
+import {CalculateWinner, checkEndGame} from "./CalculateWinner";
+import { TURNS } from "./constants";
+import { WinnerModal } from "./WinnerModal";
+
 
 function Board (){
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState(TURNS.X);
+  const [board, setBoard] = useState(()=>{
+    const boardFromStorage = window.localStorage.getItem('board')
+    if(boardFromStorage) return JSON.parse(boardFromStorage)
+      return Array(9).fill(null)
+  });
+
+  const [turn, setTurn] = useState(()=>{
+    const turnFromStorage = window.localStorage.getItem('turn')
+    return turnFromStorage?? TURNS.X
+  });
+
+
+
   const [winner, setWinner] = useState(null)
 
-    const Restart =()=>{
-      setBoard(Array(9).fill(null))
-      setTurn(TURNS.X)
-      setWinner(null)
-      
-    }
-    const checkEndGame=(newBoard)=>{
-      return newBoard.every((square) => square !== null)
-    }
+  const restart =()=>{
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
+
+    window.localStorage.removeItem('board')
+    window.localStorage.removeItem('turn')
+    
+  }
+
 
 
      const updateBoard=(i)=>{
@@ -33,6 +44,9 @@ function Board (){
 
       const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
       setTurn(newTurn)
+
+      window.localStorage.setItem('board', JSON.stringify(newBoard));
+      window.localStorage.setItem('turn', newTurn);
 
       const newWinner= CalculateWinner(newBoard)
       if(newWinner){
@@ -63,6 +77,7 @@ function Board (){
           })
         }
       </section>
+
       <section className='turn'>
         <Square isSelected={turn === TURNS.X}>
           {TURNS.X}
@@ -71,25 +86,8 @@ function Board (){
           {TURNS.O}
         </Square>
       </section>
-      <button onClick={Restart}>Reset del juego</button>
-
-            {winner !== null &&(
-              <section className="winner">
-                <div className="text">
-                  <h2>{
-                    winner === false? 'Empate':  'Ganó'
-                    }
-                    </h2>
-                    <header className="win">
-                      {winner && <Square>{winner}</Square>}
-                    </header>
-                    <footer>
-                      <button onClick={Restart} >Empezar de nuevo</button>
-                    </footer>
-                </div>
-              </section>
-            )} 
-        
+      <button onClick={restart}>Reset del juego</button>
+      <WinnerModal restart={restart} winner={winner} />   
          
           </div>
         </>
